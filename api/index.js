@@ -9,9 +9,16 @@ import hotelsRoute from "./routes/hotels.js";
 import roomsRoute from "./routes/rooms.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { Path } from "mongoose";
 
 const app = express();
 dotenv.config();
+
+if (process.env.NODE_ENV === 'production'){
+  app.use(express.static(path.join(__dirname, 'adminDashboard/build')));
+    app.get('*',(req,res)=>  {res.sendFile(path.resolve(__dirname,'adminDashboard','build','index.html'))
+  });
+}
 
 // Connect to mongoDB.
 const connect = async () => {
@@ -51,7 +58,9 @@ app.use((err, req, res, next) => {
   });
 
 // Listen for request. 
-app.listen(8800, () => {
+const PORT = process.env.PORT || 8800;
+
+app.listen(PORT, () => {
     connect();
     console.log("Listening on port: 8800")
   });
